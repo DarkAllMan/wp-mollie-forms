@@ -206,7 +206,19 @@ class Form
         $redirect = (is_ssl() ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $redirect .= strstr($redirect, '?') ? '&' : '?';
 
-        do_action('rfmp_form_submitted', $postId, $_POST);
+	$errors = false;
+	$errors = apply_filters( 'rfmp_form_submitted', $errors );
+
+	if($errors) {
+		if(is_countable($errors) && sizeof($errors)>0) {
+			foreach($errors AS $key => $e) {
+				foreach($e AS $field => $msg) {
+					echo '<p style="color: red">' . $msg . '</p>';
+				}
+			}
+		}
+		return false;
+	}
 
         try {
 
